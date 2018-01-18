@@ -1,4 +1,5 @@
 const express = require('express');
+const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const axios = require('axios');
@@ -11,39 +12,19 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
+// bodyparser and handlebars setup
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('public'));
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
 
+// initiates proper connection to mongo
 mongoose.Promise = Promise;
 mongoose.connect('mongodb://localhost/week18Populator');
 
-app.get('/db/scrape', (req, res) => {
-  axios.get('https://www.nytimes.com/?WT.z_jog=1&hF=t&vS=undefined')
-    .then(response => {
-      let $ = cheerio.load(response.data);
-      $('h2 .story-heading').each((i, div) => {
-        const result = {};
-
-        result.title = $(this).children('a').text();
-        result.summary = $(this).children('p').text();
-        result.link = $(this).children('a').attr('href');
-
-        db.Article
-          .create(result)
-          .then(dbArticle => {
-            console.log(dbArticle);
-          })
-          .catch(err => {
-            return res.json(err);
-          });
-      });
-
-      res.send('Scrape Complete')
-    })
-})
-
-
-
+// initiates routing
+const routes = require('./controllers/controller.js')
+app.use('/', routes);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)
