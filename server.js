@@ -20,11 +20,12 @@ app.set('view engine', 'handlebars');
 
 // initiates proper connection to mongo
 mongoose.Promise = Promise;
-mongoose.connect('mongodb://localhost/week18Populator');
+mongoose.connect('mongodb://localhost/mongoHeadlines');
+
+
 
 // initiates routing
-const routes = require('./controllers/controller.js')
-app.use('/', routes);
+require('./controllers/controller.js')(app)
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)
