@@ -25,7 +25,8 @@ mongoose.connect('mongodb://localhost/mongoHeadlines');
 
 
 // initiates routing
-require('./controllers/controller.js')(app)
+require('./controllers/api-controller.js')(app);
+require('./controllers/html-controller.js')(app);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)
